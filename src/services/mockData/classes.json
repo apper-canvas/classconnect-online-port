@@ -1,0 +1,84 @@
+[
+  {
+    "Id": 1,
+    "name": "Advanced Mathematics",
+    "description": "Advanced mathematics course covering calculus, algebra, and trigonometry for high school students preparing for college-level math.",
+    "teacherId": "teacher-1",
+    "classCode": "MATH01",
+    "students": [
+      {"Id": 1, "name": "Alice Johnson", "email": "alice.johnson@student.edu"},
+      {"Id": 2, "name": "Bob Smith", "email": "bob.smith@student.edu"},
+      {"Id": 3, "name": "Carol Davis", "email": "carol.davis@student.edu"},
+      {"Id": 4, "name": "David Wilson", "email": "david.wilson@student.edu"}
+    ],
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  },
+  {
+    "Id": 2,
+    "name": "Chemistry Fundamentals",
+    "description": "Introduction to chemistry principles including atomic structure, chemical bonding, and basic reactions for science students.",
+    "teacherId": "teacher-1",
+    "classCode": "CHEM02",
+    "students": [
+      {"Id": 5, "name": "Emma Brown", "email": "emma.brown@student.edu"},
+      {"Id": 6, "name": "Frank Miller", "email": "frank.miller@student.edu"},
+      {"Id": 7, "name": "Grace Lee", "email": "grace.lee@student.edu"}
+    ],
+    "createdAt": "2024-01-20T14:15:00.000Z"
+  },
+  {
+    "Id": 3,
+    "name": "World History",
+    "description": "Comprehensive study of world civilizations, major historical events, and their impact on modern society.",
+    "teacherId": "teacher-2",
+    "classCode": "HIST03",
+    "students": [
+      {"Id": 8, "name": "Henry Garcia", "email": "henry.garcia@student.edu"},
+      {"Id": 9, "name": "Ivy Rodriguez", "email": "ivy.rodriguez@student.edu"},
+      {"Id": 10, "name": "Jack Thompson", "email": "jack.thompson@student.edu"},
+      {"Id": 11, "name": "Kate Martinez", "email": "kate.martinez@student.edu"},
+      {"Id": 12, "name": "Liam Anderson", "email": "liam.anderson@student.edu"}
+    ],
+    "createdAt": "2024-01-25T09:45:00.000Z"
+  },
+  {
+    "Id": 4,
+    "name": "English Literature",
+    "description": "Study of classic and contemporary literature, focusing on reading comprehension, literary analysis, and creative writing skills.",
+    "teacherId": "teacher-3",
+    "classCode": "ENG04",
+    "students": [
+      {"Id": 13, "name": "Maya Patel", "email": "maya.patel@student.edu"},
+      {"Id": 14, "name": "Noah Johnson", "email": "noah.johnson@student.edu"},
+      {"Id": 15, "name": "Olivia White", "email": "olivia.white@student.edu"}
+    ],
+    "createdAt": "2024-02-01T11:20:00.000Z"
+  },
+  {
+    "Id": 5,
+    "name": "Physics Principles",
+    "description": "Introduction to fundamental physics concepts including mechanics, thermodynamics, and electromagnetic theory.",
+    "teacherId": "teacher-1",
+    "classCode": "PHYS05",
+    "students": [
+      {"Id": 16, "name": "Paul Harris", "email": "paul.harris@student.edu"},
+      {"Id": 17, "name": "Quinn Taylor", "email": "quinn.taylor@student.edu"},
+      {"Id": 18, "name": "Ruby Clark", "email": "ruby.clark@student.edu"},
+      {"Id": 19, "name": "Sam Lewis", "email": "sam.lewis@student.edu"}
+    ],
+    "createdAt": "2024-02-05T16:00:00.000Z"
+  },
+  {
+    "Id": 6,
+    "name": "Computer Science Basics",
+    "description": "Introduction to programming concepts, algorithms, and computer science fundamentals using Python and JavaScript.",
+    "teacherId": "teacher-4",
+    "classCode": "CS06",
+    "students": [
+      {"Id": 20, "name": "Tara Young", "email": "tara.young@student.edu"},
+      {"Id": 21, "name": "Uma Walker", "email": "uma.walker@student.edu"},
+      {"Id": 22, "name": "Victor Hall", "email": "victor.hall@student.edu"}
+    ],
+    "createdAt": "2024-02-10T13:30:00.000Z"
+  }
+]
