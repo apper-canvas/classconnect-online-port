@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Header from "@/components/organisms/Header";
 import Sidebar from "@/components/organisms/Sidebar";
 
-const Layout = ({ children, userRole, currentUser, onLogout }) => {
+const Layout = ({ children, currentUser, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleToggleSidebar = () => {
@@ -13,22 +13,19 @@ const Layout = ({ children, userRole, currentUser, onLogout }) => {
     setSidebarOpen(false);
   };
 
-  return (
+return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Sidebar 
-        userRole={userRole} 
         isOpen={sidebarOpen} 
         onClose={handleCloseSidebar} 
       />
       
       <div className="lg:pl-80">
         <Header 
-          userRole={userRole} 
           currentUser={currentUser} 
           onLogout={onLogout}
           onToggleSidebar={handleToggleSidebar}
         />
-        
         <main className="p-4 lg:p-6">
           <div className="max-w-7xl mx-auto">
             {children}

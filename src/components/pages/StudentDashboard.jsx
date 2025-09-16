@@ -51,8 +51,8 @@ const StudentDashboard = () => {
     return <Error message={error} onRetry={loadDashboardData} />;
   }
 
-  const upcomingAssignments = assignments.filter(assignment => {
-    const dueDate = new Date(assignment.dueDate);
+const upcomingAssignments = assignments.filter(assignment => {
+    const dueDate = new Date(assignment.Due_Date_c);
     const now = new Date();
     return isAfter(dueDate, now) && differenceInDays(dueDate, now) <= 7;
   }).slice(0, 4);
@@ -142,15 +142,15 @@ const StudentDashboard = () => {
           </div>
           
           <div className="space-y-4">
-            {classes.map((classItem) => (
+{classes.map((classItem) => (
               <div key={classItem.Id} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => navigate(`/classes/${classItem.Id}`)}>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl">
                     <ApperIcon name="GraduationCap" className="h-5 w-5 text-primary-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">{classItem.name}</h4>
-                    <p className="text-sm text-slate-600">{classItem.students?.length || 0} students</p>
+<h4 className="font-semibold text-slate-900">{classItem.Name_c}</h4>
+                    <p className="text-sm text-slate-600">Class Code: {classItem.Class_Code_c}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -180,7 +180,7 @@ const StudentDashboard = () => {
           
           <div className="space-y-4">
             {upcomingAssignments.map((assignment) => {
-              const dueDate = new Date(assignment.dueDate);
+const dueDate = new Date(assignment.Due_Date_c);
               const daysUntilDue = differenceInDays(dueDate, new Date());
               
               return (
@@ -190,8 +190,8 @@ const StudentDashboard = () => {
                       <ApperIcon name="FileText" className="h-5 w-5 text-accent-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-slate-900">{assignment.title}</h4>
-                      <p className="text-sm text-slate-600">{assignment.points} points</p>
+<h4 className="font-semibold text-slate-900">{assignment.Title_c}</h4>
+                      <p className="text-sm text-slate-600">{assignment.Points_c} points</p>
                     </div>
                   </div>
                   <div className="text-right">

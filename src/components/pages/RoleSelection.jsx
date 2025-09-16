@@ -13,18 +13,19 @@ const RoleSelection = ({ onRoleSelect }) => {
     setLoading(true);
 
     try {
-      // Simulate API call
+// Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const mockUser = {
         Id: 1,
-        name: role === "teacher" ? "Dr. Sarah Johnson" : "Alex Thompson",
-        email: role === "teacher" ? "sarah.johnson@school.edu" : "alex.thompson@student.edu",
+        firstName: role === "teacher" ? "Dr. Sarah" : "Alex",
+        lastName: role === "teacher" ? "Johnson" : "Thompson",
+        emailAddress: role === "teacher" ? "sarah.johnson@school.edu" : "alex.thompson@student.edu",
         role: role
       };
 
       onRoleSelect(role, mockUser);
-      toast.success(`Welcome, ${mockUser.name}!`);
+      toast.success(`Welcome, ${mockUser.firstName} ${mockUser.lastName}!`);
     } catch (error) {
       toast.error("Failed to sign in. Please try again.");
       setLoading(false);

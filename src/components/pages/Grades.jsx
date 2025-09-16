@@ -105,7 +105,7 @@ const Grades = () => {
   }
 
   const filteredAssignments = selectedClass 
-    ? assignments.filter(a => a.classId === parseInt(selectedClass))
+? assignments.filter(a => a.Class_c?.Id === parseInt(selectedClass) || a.Class_c === parseInt(selectedClass))
     : assignments;
 
   const overallGrade = calculateOverallGrade();
@@ -177,8 +177,8 @@ const Grades = () => {
               className="px-4 py-2 border-2 border-slate-200 rounded-xl text-sm focus:outline-none focus:border-primary-500 bg-white"
             >
               <option value="">All Classes</option>
-              {classes.map(cls => (
-                <option key={cls.Id} value={cls.Id.toString()}>{cls.name}</option>
+{classes.map(cls => (
+                <option key={cls.Id} value={cls.Id.toString()}>{cls.Name_c}</option>
               ))}
             </select>
           </div>
@@ -187,9 +187,9 @@ const Grades = () => {
 
       {/* Assignments List */}
       <div className="space-y-6">
-        {filteredAssignments.map((assignment) => {
+{filteredAssignments.map((assignment) => {
           const gradeInfo = getGradeInfo(assignment.Id);
-          const classInfo = classes.find(c => c.Id === assignment.classId);
+          const classInfo = classes.find(c => c.Id === (assignment.Class_c?.Id || assignment.Class_c));
           
           return (
             <Card key={assignment.Id} className="p-6 hover:shadow-lg transition-all duration-200">
@@ -200,22 +200,22 @@ const Grades = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-lg font-bold text-slate-900">{assignment.title}</h3>
+                      <h3 className="text-lg font-bold text-slate-900">{assignment.Title_c}</h3>
                       {getGradeBadge(gradeInfo)}
                     </div>
-                    <p className="text-slate-600 mb-3 line-clamp-2">{assignment.description}</p>
+                    <p className="text-slate-600 mb-3 line-clamp-2">{assignment.Description_c}</p>
                     <div className="flex items-center space-x-6 text-sm text-slate-500">
                       <div className="flex items-center">
                         <ApperIcon name="GraduationCap" className="h-4 w-4 mr-2" />
-                        <span>{classInfo?.name || "Unknown Class"}</span>
+                        <span>{classInfo?.Name_c || "Unknown Class"}</span>
                       </div>
                       <div className="flex items-center">
                         <ApperIcon name="Calendar" className="h-4 w-4 mr-2" />
-                        <span>Due {format(new Date(assignment.dueDate), "MMM d, yyyy")}</span>
+                        <span>Due {format(new Date(assignment.Due_Date_c), "MMM d, yyyy")}</span>
                       </div>
                       <div className="flex items-center">
                         <ApperIcon name="Star" className="h-4 w-4 mr-2" />
-                        <span>{assignment.points} points</span>
+                        <span>{assignment.Points_c} points</span>
                       </div>
                     </div>
                   </div>

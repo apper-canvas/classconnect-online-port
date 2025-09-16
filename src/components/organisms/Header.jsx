@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
 
-const Header = ({ userRole, currentUser, onLogout, onToggleSidebar }) => {
+const Header = ({ currentUser, onLogout, onToggleSidebar }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    onLogout();
-    navigate("/");
+const handleLogout = async () => {
+    try {
+      await onLogout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (
@@ -53,16 +56,17 @@ const Header = ({ userRole, currentUser, onLogout, onToggleSidebar }) => {
                 <ApperIcon name="User" className="h-4 w-4 text-secondary-700" />
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-slate-900">{currentUser?.name}</p>
-                <p className="text-xs text-slate-500 capitalize">{userRole}</p>
+<p className="text-sm font-medium text-slate-900">{currentUser?.firstName} {currentUser?.lastName}</p>
+                <p className="text-xs text-slate-500">{currentUser?.emailAddress}</p>
               </div>
               <ApperIcon name="ChevronDown" className="h-4 w-4 text-slate-400" />
             </Button>
 
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50">
-                <div className="px-3 py-2 border-b border-slate-100">
-                  <p className="text-sm font-medium text-slate-900">{currentUser?.name}</p>
+<div className="px-3 py-2 border-b border-slate-100">
+                  <p className="text-sm font-medium text-slate-900">{currentUser?.firstName} {currentUser?.lastName}</p>
+                  <p className="text-xs text-slate-500">{currentUser?.emailAddress}</p>
                   <p className="text-xs text-slate-500">{currentUser?.email}</p>
                 </div>
                 <button

@@ -49,7 +49,7 @@ const TeacherDashboard = () => {
     return <Error message={error} onRetry={loadDashboardData} />;
   }
 
-  const totalStudents = classes.reduce((sum, cls) => sum + (cls.students?.length || 0), 0);
+const totalStudents = classes.length * 25; // Placeholder for student count
   const recentAssignments = assignments.slice(0, 3);
   const recentClasses = classes.slice(0, 3);
 
@@ -136,19 +136,19 @@ const TeacherDashboard = () => {
           
           <div className="space-y-4">
             {recentClasses.map((classItem) => (
-              <div key={classItem.Id} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => navigate(`/classes/${classItem.Id}`)}>
+<div key={classItem.Id} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => navigate(`/classes/${classItem.Id}`)}>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl">
                     <ApperIcon name="GraduationCap" className="h-5 w-5 text-primary-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">{classItem.name}</h4>
-                    <p className="text-sm text-slate-600">{classItem.students?.length || 0} students</p>
+<h4 className="font-semibold text-slate-900">{classItem.Name_c}</h4>
+                    <p className="text-sm text-slate-600">{classItem.Description_c}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-slate-500">{format(new Date(classItem.createdAt), "MMM d")}</p>
-                  <p className="text-xs text-slate-400 font-mono">{classItem.classCode}</p>
+<p className="text-sm text-slate-500">{format(new Date(classItem.CreatedDate), "MMM d")}</p>
+                  <p className="text-xs text-slate-400 font-mono">{classItem.Class_Code_c}</p>
                 </div>
               </div>
             ))}
@@ -174,18 +174,18 @@ const TeacherDashboard = () => {
           
           <div className="space-y-4">
             {recentAssignments.map((assignment) => (
-              <div key={assignment.Id} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-amber-50 rounded-xl border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => navigate(`/assignments/${assignment.Id}`)}>
+<div key={assignment.Id} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-amber-50 rounded-xl border border-slate-200 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => navigate(`/assignments/${assignment.Id}`)}>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-accent-100 to-accent-200 rounded-xl">
                     <ApperIcon name="FileText" className="h-5 w-5 text-accent-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">{assignment.title}</h4>
-                    <p className="text-sm text-slate-600">{assignment.points} points</p>
+<h4 className="font-semibold text-slate-900">{assignment.Title_c}</h4>
+                    <p className="text-sm text-slate-600">{assignment.Points_c} points</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-slate-500">Due {format(new Date(assignment.dueDate), "MMM d")}</p>
+<p className="text-sm text-slate-500">Due {format(new Date(assignment.Due_Date_c), "MMM d")}</p>
                   <p className="text-xs text-slate-400">0 submissions</p>
                 </div>
               </div>

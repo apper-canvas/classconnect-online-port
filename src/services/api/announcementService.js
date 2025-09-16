@@ -1,58 +1,255 @@
-import announcementData from "@/services/mockData/announcements.json";
-
-// Simulate network delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { toast } from "react-toastify";
 
 const announcementService = {
   async getAll() {
-    await delay(250);
-    return [...announcementData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Title_c"}},
+          {"field": {"Name": "Content_c"}},
+          {"field": {"Name": "Class_c"}},
+          {"field": {"Name": "CreatedDate"}}
+        ],
+        orderBy: [{"fieldName": "CreatedDate", "sorttype": "DESC"}],
+        pagingInfo: {"limit": 100, "offset": 0}
+      };
+
+      const response = await apperClient.fetchRecords("announcement_c", params);
+
+      if (!response.success) {
+        console.error("Failed to fetch announcements:", response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching announcements:", error?.response?.data?.message || error.message);
+      toast.error("Failed to load announcements. Please try again.");
+      return [];
+    }
   },
 
   async getById(Id) {
-    await delay(200);
-    const announcement = announcementData.find(a => a.Id === Id);
-    if (!announcement) {
-      throw new Error("Announcement not found");
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Title_c"}},
+          {"field": {"Name": "Content_c"}},
+          {"field": {"Name": "Class_c"}},
+          {"field": {"Name": "CreatedDate"}}
+        ]
+      };
+
+      const response = await apperClient.getRecordById("announcement_c", Id, params);
+
+      if (!response.success || !response.data) {
+        console.error("Announcement not found:", response.message);
+        toast.error("Announcement not found");
+        return null;
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching announcement:", error?.response?.data?.message || error.message);
+      toast.error("Failed to load announcement details. Please try again.");
+      return null;
     }
-    return { ...announcement };
   },
 
   async getByClassId(classId) {
-    await delay(300);
-    return announcementData.filter(a => a.classId === classId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Title_c"}},
+          {"field": {"Name": "Content_c"}},
+          {"field": {"Name": "Class_c"}},
+          {"field": {"Name": "CreatedDate"}}
+        ],
+        where: [{"FieldName": "Class_c", "Operator": "EqualTo", "Values": [parseInt(classId)]}],
+        orderBy: [{"fieldName": "CreatedDate", "sorttype": "DESC"}],
+        pagingInfo: {"limit": 100, "offset": 0}
+      };
+
+      const response = await apperClient.fetchRecords("announcement_c", params);
+
+      if (!response.success) {
+        console.error("Failed to fetch announcements for class:", response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching announcements for class:", error?.response?.data?.message || error.message);
+      toast.error("Failed to load class announcements. Please try again.");
+      return [];
+    }
   },
 
   async create(data) {
-    await delay(500);
-    const maxId = Math.max(...announcementData.map(a => a.Id), 0);
-    const newAnnouncement = {
-      Id: maxId + 1,
-      ...data,
-      createdAt: new Date().toISOString()
-    };
-    announcementData.push(newAnnouncement);
-    return { ...newAnnouncement };
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        records: [{
+          Title_c: data.title || data.Title_c,
+          Content_c: data.content || data.Content_c,
+          Class_c: parseInt(data.classId || data.Class_c)
+        }]
+      };
+
+      const response = await apperClient.createRecord("announcement_c", params);
+
+      if (!response.success) {
+        console.error("Failed to create announcement:", response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to create announcement: ${JSON.stringify(failed)}`);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          return null;
+        }
+        
+        const successful = response.results.filter(r => r.success);
+        if (successful.length > 0) {
+          toast.success("Announcement created successfully!");
+          return successful[0].data;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error creating announcement:", error?.response?.data?.message || error.message);
+      toast.error("Failed to create announcement. Please try again.");
+      return null;
+    }
   },
 
   async update(Id, data) {
-    await delay(400);
-    const index = announcementData.findIndex(a => a.Id === Id);
-    if (index === -1) {
-      throw new Error("Announcement not found");
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const updateData = {
+        Id: Id
+      };
+
+      if (data.title || data.Title_c) updateData.Title_c = data.title || data.Title_c;
+      if (data.content || data.Content_c) updateData.Content_c = data.content || data.Content_c;
+      if (data.classId || data.Class_c) updateData.Class_c = parseInt(data.classId || data.Class_c);
+
+      const params = {
+        records: [updateData]
+      };
+
+      const response = await apperClient.updateRecord("announcement_c", params);
+
+      if (!response.success) {
+        console.error("Failed to update announcement:", response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to update announcement: ${JSON.stringify(failed)}`);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          return null;
+        }
+        
+        const successful = response.results.filter(r => r.success);
+        if (successful.length > 0) {
+          toast.success("Announcement updated successfully!");
+          return successful[0].data;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error updating announcement:", error?.response?.data?.message || error.message);
+      toast.error("Failed to update announcement. Please try again.");
+      return null;
     }
-    announcementData[index] = { ...announcementData[index], ...data };
-    return { ...announcementData[index] };
   },
 
   async delete(Id) {
-    await delay(300);
-    const index = announcementData.findIndex(a => a.Id === Id);
-    if (index === -1) {
-      throw new Error("Announcement not found");
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        RecordIds: [Id]
+      };
+
+      const response = await apperClient.deleteRecord("announcement_c", params);
+
+      if (!response.success) {
+        console.error("Failed to delete announcement:", response.message);
+        toast.error(response.message);
+        return false;
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error(`Failed to delete announcement: ${JSON.stringify(failed)}`);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          return false;
+        }
+        
+        toast.success("Announcement deleted successfully!");
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error deleting announcement:", error?.response?.data?.message || error.message);
+      toast.error("Failed to delete announcement. Please try again.");
+      return false;
     }
-    announcementData.splice(index, 1);
-    return { success: true };
   }
 };
 

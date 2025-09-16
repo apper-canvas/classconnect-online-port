@@ -19,10 +19,10 @@ const Announcements = ({ userRole }) => {
   const [error, setError] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState("");
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    classId: ""
+const [formData, setFormData] = useState({
+    Title_c: "",
+    Content_c: "",
+    Class_c: ""
   });
   const [creating, setCreating] = useState(false);
 
@@ -50,9 +50,9 @@ const Announcements = ({ userRole }) => {
     loadAnnouncementsData();
   }, []);
 
-  const handleCreateAnnouncement = async (e) => {
+const handleCreateAnnouncement = async (e) => {
     e.preventDefault();
-    if (!formData.title.trim() || !formData.content.trim() || !formData.classId) {
+    if (!formData.Title_c.trim() || !formData.Content_c.trim() || !formData.Class_c) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -60,18 +60,18 @@ const Announcements = ({ userRole }) => {
     try {
       setCreating(true);
       const newAnnouncement = await announcementService.create({
-        title: formData.title,
-        content: formData.content,
-        classId: parseInt(formData.classId)
+        Title_c: formData.Title_c,
+        Content_c: formData.Content_c,
+        Class_c: parseInt(formData.Class_c)
       });
       
-      const updatedAnnouncements = [newAnnouncement, ...announcements];
-      setAnnouncements(updatedAnnouncements);
-      setShowCreateModal(false);
-      setFormData({ title: "", content: "", classId: "" });
-      toast.success("Announcement posted successfully!");
+      if (newAnnouncement) {
+        const updatedAnnouncements = [newAnnouncement, ...announcements];
+        setAnnouncements(updatedAnnouncements);
+        setShowCreateModal(false);
+        setFormData({ Title_c: "", Content_c: "", Class_c: "" });
+      }
     } catch (err) {
-      toast.error("Failed to post announcement. Please try again.");
       console.error("Announcement creation error:", err);
     } finally {
       setCreating(false);
@@ -92,7 +92,7 @@ const Announcements = ({ userRole }) => {
   }
 
   const filteredAnnouncements = selectedClass 
-    ? announcements.filter(a => a.classId === parseInt(selectedClass))
+? announcements.filter(a => a.Class_c?.Id === parseInt(selectedClass) || a.Class_c === parseInt(selectedClass))
     : announcements;
 
   return (
@@ -143,7 +143,7 @@ const Announcements = ({ userRole }) => {
             >
               <option value="">All Classes</option>
               {classes.map(cls => (
-                <option key={cls.Id} value={cls.Id.toString()}>{cls.name}</option>
+<option key={cls.Id} value={cls.Id.toString()}>{cls.Name_c}</option>
               ))}
             </select>
           </div>
@@ -159,7 +159,7 @@ const Announcements = ({ userRole }) => {
       ) : (
         <div className="space-y-6">
           {filteredAnnouncements.map((announcement) => {
-            const classInfo = classes.find(c => c.Id === announcement.classId);
+const classInfo = classes.find(c => c.Id === (announcement.Class_c?.Id || announcement.Class_c));
             
             return (
               <Card key={announcement.Id} className="p-6">
@@ -171,14 +171,14 @@ const Announcements = ({ userRole }) => {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="text-xl font-bold text-slate-900 mb-1">{announcement.title}</h3>
-                        <div className="flex items-center space-x-4 text-sm text-slate-500">
+<div className="flex items-center space-x-4 text-sm text-slate-500">
                           <div className="flex items-center">
                             <ApperIcon name="GraduationCap" className="h-4 w-4 mr-2" />
-                            <span>{classInfo?.name || "General"}</span>
+                            <span>{classInfo?.Name_c || "General"}</span>
                           </div>
                           <div className="flex items-center">
                             <ApperIcon name="Clock" className="h-4 w-4 mr-2" />
-                            <span>{format(new Date(announcement.createdAt), "MMM d, yyyy 'at' h:mm a")}</span>
+                            <span>{format(new Date(announcement.CreatedDate), "MMM d, yyyy 'at' h:mm a")}</span>
                           </div>
                         </div>
                       </div>
@@ -190,15 +190,15 @@ const Announcements = ({ userRole }) => {
                     
                     <div className="prose prose-slate max-w-none mb-4">
                       <p className="text-slate-700 leading-relaxed text-base whitespace-pre-wrap">
-                        {announcement.content}
+{announcement.Content_c}
                       </p>
                     </div>
                     
                     {userRole === "teacher" && (
                       <div className="flex items-center space-x-4 pt-4 border-t border-slate-200">
                         <div className="flex items-center text-sm text-slate-500">
-                          <ApperIcon name="Eye" className="h-4 w-4 mr-2" />
-                          <span>Viewed by {Math.floor(Math.random() * (classInfo?.students?.length || 10)) + 1} students</span>
+<ApperIcon name="Eye" className="h-4 w-4 mr-2" />
+                          <span>Viewed by {Math.floor(Math.random() * 10) + 1} students</span>
                         </div>
                         <Button variant="ghost" size="sm" leftIcon="Edit">
                           Edit
@@ -239,25 +239,27 @@ const Announcements = ({ userRole }) => {
                   label="Announcement Title"
                   name="title"
                   placeholder="Enter announcement title"
-                  value={formData.title}
-                  onChange={handleInputChange}
+value={formData.Title_c}
+                  onChange={(e) => setFormData({...formData, Title_c: e.target.value})}
                   required
                 />
                 <FormField
-                  type="select"
+type="select"
                   label="Class"
-                  name="classId"
-                  value={formData.classId}
-                  onChange={handleInputChange}
-                  options={classes.map(cls => ({ value: cls.Id.toString(), label: cls.name }))}
+                  name="Class_c"
+                  value={formData.Class_c}
+                  onChange={(e) => setFormData({...formData, Class_c: e.target.value})}
+                  options={classes.map(cls => ({ value: cls.Id.toString(), label: cls.Name_c }))}
                   required
                 />
               </div>
               
               <FormField
                 type="textarea"
-                label="Announcement Content"
-                name="content"
+label="Announcement Content"
+                name="Content_c"
+                value={formData.Content_c}
+                onChange={(e) => setFormData({...formData, Content_c: e.target.value})}
                 placeholder="Enter your announcement message here..."
                 value={formData.content}
                 onChange={handleInputChange}

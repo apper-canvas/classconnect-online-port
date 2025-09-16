@@ -1,90 +1,154 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { useState } from "react";
-import Layout from "@/components/organisms/Layout";
-import RoleSelection from "@/components/pages/RoleSelection";
-import TeacherDashboard from "@/components/pages/TeacherDashboard";
-import StudentDashboard from "@/components/pages/StudentDashboard";
-import Classes from "@/components/pages/Classes";
-import Assignments from "@/components/pages/Assignments";
-import Gradebook from "@/components/pages/Gradebook";
-import Grades from "@/components/pages/Grades";
-import Announcements from "@/components/pages/Announcements";
-import ClassDetail from "@/components/pages/ClassDetail";
-import AssignmentDetail from "@/components/pages/AssignmentDetail";
+import { useState, useEffect } from "react"
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import Layout from "@/components/organisms/Layout"
+import StudentDashboard from "@/components/pages/StudentDashboard"
+import TeacherDashboard from "@/components/pages/TeacherDashboard"
+import Classes from "@/components/pages/Classes"
+import Assignments from "@/components/pages/Assignments"
+import Gradebook from "@/components/pages/Gradebook"
+import Grades from "@/components/pages/Grades"
+import Announcements from "@/components/pages/Announcements"
+import ClassDetail from "@/components/pages/ClassDetail"
+import AssignmentDetail from "@/components/pages/AssignmentDetail"
+import Login from "@/components/pages/Login"
+import Signup from "@/components/pages/Signup"
+import Callback from "@/components/pages/Callback"
+import ErrorPage from "@/components/pages/ErrorPage"
+import ResetPassword from "@/components/pages/ResetPassword"
+import PromptPassword from "@/components/pages/PromptPassword"
+import { setUser, clearUser } from "@/store/userSlice"
 
 function App() {
-  const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem("currentUser");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  const userState = useSelector((state) => state.user);
+  const isAuthenticated = userState?.isAuthenticated || false;
+  
+  useEffect(() => {
+    const { ApperClient, ApperUI } = window.ApperSDK;
+    
+    const client = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+    
+    ApperUI.setup(client, {
+      target: '#authentication',
+      clientId: import.meta.env.VITE_APPER_PROJECT_ID,
+      view: 'both',
+      onSuccess: function (user) {
+        setIsInitialized(true);
+        let currentPath = window.location.pathname + window.location.search;
+        let redirectPath = new URLSearchParams(window.location.search).get('redirect');
+        const isAuthPage = currentPath.includes('/login') || currentPath.includes('/signup') || 
+                           currentPath.includes('/callback') || currentPath.includes('/error') || 
+                           currentPath.includes('/prompt-password') || currentPath.includes('/reset-password');
+        
+        if (user) {
+          if (redirectPath) {
+            navigate(redirectPath);
+          } else if (!isAuthPage) {
+            if (!currentPath.includes('/login') && !currentPath.includes('/signup')) {
+              navigate(currentPath);
+            } else {
+              navigate('/');
+            }
+          } else {
+            navigate('/');
+          }
+          dispatch(setUser(JSON.parse(JSON.stringify(user))));
+        } else {
+          if (!isAuthPage) {
+            navigate(
+              currentPath.includes('/signup')
+                ? `/signup?redirect=${currentPath}`
+                : currentPath.includes('/login')
+                ? `/login?redirect=${currentPath}`
+                : '/login'
+            );
+          } else if (redirectPath) {
+            if (
+              !['error', 'signup', 'login', 'callback', 'prompt-password', 'reset-password'].some((path) => currentPath.includes(path))
+            ) {
+              navigate(`/login?redirect=${redirectPath}`);
+            } else {
+              navigate(currentPath);
+            }
+          } else if (isAuthPage) {
+            navigate(currentPath);
+          } else {
+            navigate('/login');
+          }
+          dispatch(clearUser());
+        }
+      },
+      onError: function(error) {
+        console.error("Authentication failed:", error);
+        setIsInitialized(true);
+      }
+    });
+  }, []);
 
-  const handleRoleSelect = (role, user) => {
-    setUserRole(role);
-    setCurrentUser(user);
-    localStorage.setItem("userRole", role);
-    localStorage.setItem("currentUser", JSON.stringify(user));
+  const handleLogout = async () => {
+    try {
+      const { ApperUI } = window.ApperSDK;
+      await ApperUI.logout();
+      dispatch(clearUser());
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
-  const handleLogout = () => {
-    setUserRole(null);
-    setCurrentUser(null);
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("currentUser");
-  };
+  if (!isInitialized) {
+    return (
+      <div className="loading flex items-center justify-center p-6 h-screen w-full">
+        <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2v4"></path>
+          <path d="m16.2 7.8 2.9-2.9"></path>
+          <path d="M18 12h4"></path>
+          <path d="m16.2 16.2 2.9 2.9"></path>
+          <path d="M12 18v4"></path>
+          <path d="m4.9 19.1 2.9-2.9"></path>
+          <path d="M2 12h4"></path>
+          <path d="m4.9 4.9 2.9 2.9"></path>
+        </svg>
+      </div>
+    );
+  }
 
-  if (!userRole) {
-    return <RoleSelection onRoleSelect={handleRoleSelect} />;
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/callback" element={<Callback />} />
+        <Route path="/error" element={<ErrorPage />} />
+        <Route path="/prompt-password/:appId/:emailAddress/:provider" element={<PromptPassword />} />
+        <Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
   }
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        <Routes>
-          <Route 
-            path="/*" 
-            element={
-              <Layout userRole={userRole} currentUser={currentUser} onLogout={handleLogout}>
-                <Routes>
-                  <Route 
-                    path="/" 
-                    element={
-                      userRole === "teacher" ? 
-                        <TeacherDashboard /> : 
-                        <StudentDashboard />
-                    } 
-                  />
-                  <Route path="/classes" element={<Classes userRole={userRole} />} />
-                  <Route path="/classes/:classId" element={<ClassDetail userRole={userRole} />} />
-                  <Route path="/assignments" element={<Assignments userRole={userRole} />} />
-                  <Route path="/assignments/:assignmentId" element={<AssignmentDetail userRole={userRole} />} />
-                  <Route path="/gradebook" element={<Gradebook />} />
-                  <Route path="/grades" element={<Grades />} />
-                  <Route path="/announcements" element={<Announcements userRole={userRole} />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </Layout>
-            } 
-          />
-        </Routes>
-        
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          toastClassName="toast-custom"
-          style={{ zIndex: 9999 }}
-        />
-      </div>
-    </BrowserRouter>
+    <Layout currentUser={userState.user} onLogout={handleLogout}>
+      <Routes>
+        <Route path="/" element={<StudentDashboard />} />
+        <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/classes" element={<Classes />} />
+        <Route path="/classes/:classId" element={<ClassDetail />} />
+        <Route path="/assignments" element={<Assignments />} />
+        <Route path="/assignments/:assignmentId" element={<AssignmentDetail />} />
+        <Route path="/gradebook" element={<Gradebook />} />
+        <Route path="/grades" element={<Grades />} />
+        <Route path="/announcements" element={<Announcements />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Layout>
   );
 }
 

@@ -31,8 +31,9 @@ const AssignmentDetail = ({ userRole }) => {
       const assignmentData = await assignmentService.getById(parseInt(assignmentId));
       setAssignment(assignmentData);
       
-      if (assignmentData.classId) {
-        const classInfo = await classService.getById(assignmentData.classId);
+if (assignmentData.Class_c) {
+        const classId = assignmentData.Class_c?.Id || assignmentData.Class_c;
+        const classInfo = await classService.getById(classId);
         setClassData(classInfo);
       }
     } catch (err) {
@@ -83,7 +84,7 @@ const AssignmentDetail = ({ userRole }) => {
     return <Error message="Assignment not found." />;
   }
 
-  const dueDate = new Date(assignment.dueDate);
+const dueDate = new Date(assignment.Due_Date_c);
   const now = new Date();
   const isOverdue = isAfter(now, dueDate);
   const daysUntilDue = differenceInDays(dueDate, now);
@@ -125,12 +126,12 @@ const AssignmentDetail = ({ userRole }) => {
               <ApperIcon name="FileText" className="h-8 w-8 text-accent-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold gradient-text mb-2">{assignment.title}</h1>
-              {classData && (
+<h1 className="text-3xl font-bold gradient-text mb-2">{assignment.Title_c}</h1>
+{classData && (
                 <div className="flex items-center space-x-4 text-sm text-slate-600 mb-4">
                   <div className="flex items-center">
                     <ApperIcon name="GraduationCap" className="h-4 w-4 mr-2" />
-                    <span>{classData.name}</span>
+                    <span>{classData.Name_c}</span>
                   </div>
                 </div>
               )}
@@ -141,7 +142,7 @@ const AssignmentDetail = ({ userRole }) => {
                 </div>
                 <div className="flex items-center">
                   <ApperIcon name="Star" className="h-4 w-4 mr-2" />
-                  <span>{assignment.points} points</span>
+<span>{assignment.Points_c} points</span>
                 </div>
               </div>
             </div>
@@ -164,18 +165,18 @@ const AssignmentDetail = ({ userRole }) => {
             <h3 className="text-lg font-bold text-slate-900 mb-4">Assignment Instructions</h3>
             <div className="prose prose-slate max-w-none">
               <p className="text-slate-700 leading-relaxed text-base">
-                {assignment.description}
+{assignment.Description_c}
               </p>
             </div>
             
-            {assignment.attachments && assignment.attachments.length > 0 && (
+{assignment.Attachments_c && assignment.Attachments_c.length > 0 && (
               <div className="mt-6 pt-6 border-t border-slate-200">
                 <h4 className="text-sm font-semibold text-slate-900 mb-3">Attachments</h4>
                 <div className="space-y-2">
-                  {assignment.attachments.map((attachment, index) => (
+                  {assignment.Attachments_c.split(',').filter(att => att.trim()).map((attachment, index) => (
                     <div key={index} className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
                       <ApperIcon name="Paperclip" className="h-4 w-4 text-slate-400" />
-                      <span className="text-sm text-slate-700">{attachment.name || `Attachment ${index + 1}`}</span>
+                      <span className="text-sm text-slate-700">{attachment.trim() || `Attachment ${index + 1}`}</span>
                       <Button variant="ghost" size="sm">
                         <ApperIcon name="Download" className="h-3 w-3" />
                       </Button>
@@ -307,8 +308,8 @@ const AssignmentDetail = ({ userRole }) => {
                     <ApperIcon name="GraduationCap" className="h-5 w-5 text-primary-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900">{classData.name}</p>
-                    <p className="text-sm text-slate-600">{classData.students?.length || 0} students</p>
+<p className="font-medium text-slate-900">{classData.Name_c}</p>
+                    <p className="text-sm text-slate-600">Code: {classData.Class_Code_c}</p>
                   </div>
                 </div>
               </div>

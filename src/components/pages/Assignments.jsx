@@ -20,12 +20,12 @@ const Assignments = ({ userRole }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    dueDate: "",
-    points: "",
-    classId: ""
+const [formData, setFormData] = useState({
+    Title_c: "",
+    Description_c: "",
+    Due_Date_c: "",
+    Points_c: "",
+    Class_c: ""
   });
   const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
@@ -59,9 +59,9 @@ const Assignments = ({ userRole }) => {
     if (!searchTerm.trim()) {
       setFilteredAssignments(assignments);
     } else {
-      const filtered = assignments.filter(assignment =>
-        assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        assignment.description.toLowerCase().includes(searchTerm.toLowerCase())
+const filtered = assignments.filter(assignment =>
+        assignment.Title_c?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        assignment.Description_c?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredAssignments(filtered);
     }
@@ -76,13 +76,13 @@ const Assignments = ({ userRole }) => {
 
     try {
       setCreating(true);
-      const newAssignment = await assignmentService.create({
-        title: formData.title,
-        description: formData.description,
-        dueDate: formData.dueDate,
-        points: parseInt(formData.points),
-        classId: parseInt(formData.classId),
-        attachments: []
+const newAssignment = await assignmentService.create({
+        Title_c: formData.Title_c,
+        Description_c: formData.Description_c,
+        Due_Date_c: formData.Due_Date_c,
+        Points_c: parseInt(formData.Points_c),
+        Class_c: parseInt(formData.Class_c),
+        Attachments_c: ""
       });
       
       const updatedAssignments = [newAssignment, ...assignments];
@@ -165,7 +165,7 @@ const Assignments = ({ userRole }) => {
             <select className="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary-500">
               <option>All Classes</option>
               {classes.map(cls => (
-                <option key={cls.Id} value={cls.Id}>{cls.name}</option>
+<option key={cls.Id} value={cls.Id}>{cls.Name_c}</option>
               ))}
             </select>
           </div>
@@ -220,7 +220,7 @@ const Assignments = ({ userRole }) => {
                   name="classId"
                   value={formData.classId}
                   onChange={handleInputChange}
-                  options={classes.map(cls => ({ value: cls.Id.toString(), label: cls.name }))}
+options={classes.map(cls => ({ value: cls.Id.toString(), label: cls.Name_c }))}
                   required
                 />
               </div>

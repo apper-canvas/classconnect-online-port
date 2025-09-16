@@ -19,10 +19,10 @@ const Classes = ({ userRole }) => {
   const [error, setError] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    classCode: ""
+const [formData, setFormData] = useState({
+    Name_c: "",
+    Description_c: "",
+    Class_Code_c: ""
   });
   const [creating, setCreating] = useState(false);
   const [joining, setJoining] = useState(false);
@@ -52,16 +52,16 @@ const Classes = ({ userRole }) => {
       setFilteredClasses(classes);
     } else {
       const filtered = classes.filter(cls =>
-        cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cls.description.toLowerCase().includes(searchTerm.toLowerCase())
+cls.Name_c?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cls.Description_c?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredClasses(filtered);
     }
   };
 
-  const handleCreateClass = async (e) => {
+const handleCreateClass = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.description.trim()) {
+    if (!formData.Name_c.trim() || !formData.Description_c.trim()) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -69,30 +69,29 @@ const Classes = ({ userRole }) => {
     try {
       setCreating(true);
       const newClass = await classService.create({
-        name: formData.name,
-        description: formData.description,
-        teacherId: "teacher-1",
-        classCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
-        students: []
+        Name_c: formData.Name_c,
+        Description_c: formData.Description_c,
+        Teacher_Id_c: 1, // Placeholder teacher ID
+        Class_Code_c: Math.random().toString(36).substring(2, 8).toUpperCase()
       });
       
-      const updatedClasses = [newClass, ...classes];
-      setClasses(updatedClasses);
-      setFilteredClasses(updatedClasses);
-      setShowCreateModal(false);
-      setFormData({ name: "", description: "", classCode: "" });
-      toast.success("Class created successfully!");
+      if (newClass) {
+        const updatedClasses = [newClass, ...classes];
+        setClasses(updatedClasses);
+        setFilteredClasses(updatedClasses);
+        setShowCreateModal(false);
+        setFormData({ Name_c: "", Description_c: "", Class_Code_c: "" });
+      }
     } catch (err) {
-      toast.error("Failed to create class. Please try again.");
       console.error("Class creation error:", err);
     } finally {
       setCreating(false);
     }
   };
 
-  const handleJoinClass = async (e) => {
+const handleJoinClass = async (e) => {
     e.preventDefault();
-    if (!formData.classCode.trim()) {
+    if (!formData.Class_Code_c.trim()) {
       toast.error("Please enter a class code.");
       return;
     }
@@ -103,7 +102,7 @@ const Classes = ({ userRole }) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setShowJoinModal(false);
-      setFormData({ name: "", description: "", classCode: "" });
+      setFormData({ Name_c: "", Description_c: "", Class_Code_c: "" });
       toast.success("Successfully joined the class!");
       await loadClasses(); // Reload classes
     } catch (err) {
@@ -191,9 +190,8 @@ const Classes = ({ userRole }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredClasses.map((classItem) => (
             <ClassCard 
-              key={classItem.Id} 
-              classData={classItem} 
-              userRole={userRole}
+key={classItem.Id} 
+              classData={classItem}
             />
           ))}
         </div>
@@ -218,14 +216,16 @@ const Classes = ({ userRole }) => {
                 label="Class Name"
                 name="name"
                 placeholder="Enter class name"
-                value={formData.name}
-                onChange={handleInputChange}
+value={formData.Name_c}
+                onChange={(e) => setFormData({...formData, Name_c: e.target.value})}
                 required
               />
               <FormField
                 type="textarea"
-                label="Description"
-                name="description"
+label="Description"
+                name="Description_c"
+                value={formData.Description_c}
+                onChange={(e) => setFormData({...formData, Description_c: e.target.value})}
                 placeholder="Enter class description"
                 value={formData.description}
                 onChange={handleInputChange}
@@ -275,8 +275,8 @@ const Classes = ({ userRole }) => {
                 label="Class Code"
                 name="classCode"
                 placeholder="Enter 6-digit class code"
-                value={formData.classCode}
-                onChange={handleInputChange}
+value={formData.Class_Code_c}
+                onChange={(e) => setFormData({...formData, Class_Code_c: e.target.value})}
                 leftIcon={<ApperIcon name="Key" className="h-4 w-4" />}
                 required
               />

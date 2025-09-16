@@ -26,7 +26,7 @@ const ClassDetail = ({ userRole }) => {
       setLoading(true);
       setError("");
       
-      const [classInfo, classAssignments] = await Promise.all([
+const [classInfo, classAssignments] = await Promise.all([
         classService.getById(parseInt(classId)),
         assignmentService.getByClassId(parseInt(classId))
       ]);
@@ -48,7 +48,7 @@ const ClassDetail = ({ userRole }) => {
   }, [classId]);
 
   const handleCopyClassCode = () => {
-    navigator.clipboard.writeText(classData.classCode);
+navigator.clipboard.writeText(classData.Class_Code_c);
     toast.success("Class code copied to clipboard!");
   };
 
@@ -95,21 +95,20 @@ const ClassDetail = ({ userRole }) => {
               <ApperIcon name="GraduationCap" className="h-8 w-8 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold gradient-text mb-2">{classData.name}</h1>
-              <p className="text-slate-600 text-lg mb-4">{classData.description}</p>
+<h1 className="text-3xl font-bold gradient-text mb-2">{classData.Name_c}</h1>
+              <p className="text-slate-600 text-lg mb-4">{classData.Description_c}</p>
               <div className="flex items-center space-x-6 text-sm text-slate-500">
                 <div className="flex items-center">
                   <ApperIcon name="Users" className="h-4 w-4 mr-2" />
-                  <span>{classData.students?.length || 0} students</span>
+<span>Active Class</span>
                 </div>
                 <div className="flex items-center">
                   <ApperIcon name="Calendar" className="h-4 w-4 mr-2" />
-                  <span>Created {format(new Date(classData.createdAt), "MMM d, yyyy")}</span>
+                  <span>Created {format(new Date(classData.CreatedDate), "MMM d, yyyy")}</span>
                 </div>
-                {userRole === "teacher" && (
-                  <div className="flex items-center">
-                    <ApperIcon name="Key" className="h-4 w-4 mr-2" />
-                    <span className="font-mono">{classData.classCode}</span>
+                <div className="flex items-center">
+                  <ApperIcon name="Key" className="h-4 w-4 mr-2" />
+                  <span className="font-mono">{classData.Class_Code_c}</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -212,12 +211,12 @@ const ClassDetail = ({ userRole }) => {
                             <ApperIcon name="FileText" className="h-4 w-4 text-accent-600" />
                           </div>
                           <div>
-                            <p className="font-medium text-slate-900">{assignment.title}</p>
-                            <p className="text-sm text-slate-600">{assignment.points} points</p>
+<p className="font-medium text-slate-900">{assignment.Title_c}</p>
+                            <p className="text-sm text-slate-600">{assignment.Points_c} points</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-slate-500">Due {format(new Date(assignment.dueDate), "MMM d")}</p>
+<p className="text-sm text-slate-500">Due {format(new Date(assignment.Due_Date_c), "MMM d")}</p>
                           <Badge variant="warning" size="sm">Pending</Badge>
                         </div>
                       </div>
@@ -234,7 +233,7 @@ const ClassDetail = ({ userRole }) => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-600">Total Students</span>
-                    <span className="font-bold text-primary-600">{classData.students?.length || 0}</span>
+<span className="font-bold text-primary-600">0</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-600">Active Assignments</span>
@@ -257,7 +256,7 @@ const ClassDetail = ({ userRole }) => {
                   <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-4 border border-primary-200">
                     <div className="text-center">
                       <p className="text-sm text-slate-600 mb-2">Share this code with students</p>
-                      <p className="text-2xl font-mono font-bold text-primary-600 mb-4">{classData.classCode}</p>
+<p className="text-2xl font-mono font-bold text-primary-600 mb-4">{classData.Class_Code_c}</p>
                       <Button
                         variant="primary"
                         size="sm"
@@ -285,8 +284,8 @@ const ClassDetail = ({ userRole }) => {
                   <Card key={assignment.Id} className="p-6 cursor-pointer card-hover" onClick={() => navigate(`/assignments/${assignment.Id}`)}>
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="text-lg font-bold text-slate-900 mb-1">{assignment.title}</h3>
-                        <p className="text-slate-600 text-sm line-clamp-2">{assignment.description}</p>
+<h3 className="text-lg font-bold text-slate-900 mb-1">{assignment.Title_c}</h3>
+                        <p className="text-slate-600 text-sm line-clamp-2">{assignment.Description_c}</p>
                       </div>
                       <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-accent-50 to-accent-100 rounded-xl ml-4">
                         <ApperIcon name="FileText" className="h-5 w-5 text-accent-600" />
@@ -295,7 +294,7 @@ const ClassDetail = ({ userRole }) => {
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center text-slate-500">
                         <ApperIcon name="Calendar" className="h-4 w-4 mr-1" />
-                        <span>Due {format(new Date(assignment.dueDate), "MMM d")}</span>
+<span>Due {format(new Date(assignment.Due_Date_c), "MMM d")}</span>
                       </div>
                       <div className="flex items-center text-slate-500">
                         <ApperIcon name="Star" className="h-4 w-4 mr-1" />
@@ -312,7 +311,7 @@ const ClassDetail = ({ userRole }) => {
         {activeTab === "students" && (
           <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-slate-900">Students ({classData.students?.length || 0})</h3>
+<h3 className="text-lg font-bold text-slate-900">Students (0)</h3>
               {userRole === "teacher" && (
                 <Button variant="secondary" leftIcon="UserPlus">
                   Invite Students
@@ -324,7 +323,7 @@ const ClassDetail = ({ userRole }) => {
               <Empty type="students" />
             ) : (
               <div className="space-y-3">
-                {classData.students.map((student, index) => (
+{[].map((student, index) => (
                   <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full">

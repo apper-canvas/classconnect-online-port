@@ -97,7 +97,7 @@ const Gradebook = () => {
   }
 
   const filteredAssignments = selectedClass 
-    ? assignments.filter(a => a.classId === parseInt(selectedClass))
+? assignments.filter(a => a.Class_c?.Id === parseInt(selectedClass) || a.Class_c === parseInt(selectedClass))
     : assignments;
 
   return (
@@ -132,8 +132,8 @@ const Gradebook = () => {
               className="px-4 py-2 border-2 border-slate-200 rounded-xl text-sm focus:outline-none focus:border-primary-500 bg-white"
             >
               <option value="">All Classes</option>
-              {classes.map(cls => (
-                <option key={cls.Id} value={cls.Id.toString()}>{cls.name}</option>
+{classes.map(cls => (
+                <option key={cls.Id} value={cls.Id.toString()}>{cls.Name_c}</option>
               ))}
             </select>
           </div>
@@ -170,11 +170,11 @@ const Gradebook = () => {
               <thead className="bg-gradient-to-r from-slate-50 to-blue-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">Student</th>
-                  {filteredAssignments.slice(0, 4).map(assignment => (
+{filteredAssignments.slice(0, 4).map(assignment => (
                     <th key={assignment.Id} className="px-4 py-4 text-center text-sm font-semibold text-slate-900 min-w-[120px]">
                       <div>
-                        <p className="truncate">{assignment.title}</p>
-                        <p className="text-xs text-slate-500 font-normal">{assignment.points} pts</p>
+                        <p className="truncate">{assignment.Title_c}</p>
+                        <p className="text-xs text-slate-500 font-normal">{assignment.Points_c} pts</p>
                       </div>
                     </th>
                   ))}
@@ -198,7 +198,7 @@ const Gradebook = () => {
                           </div>
                         </div>
                       </td>
-                      {filteredAssignments.slice(0, 4).map(assignment => {
+{filteredAssignments.slice(0, 4).map(assignment => {
                         const grade = mockGrades[student.Id]?.[assignment.Id];
                         return (
                           <td key={assignment.Id} className="px-4 py-4 text-center">
@@ -208,7 +208,7 @@ const Gradebook = () => {
                                   {grade}%
                                 </span>
                                 <span className="text-xs text-slate-500">
-                                  {Math.round(grade * assignment.points / 100)}/{assignment.points}
+                                  {Math.round(grade * assignment.Points_c / 100)}/{assignment.Points_c}
                                 </span>
                               </div>
                             ) : (

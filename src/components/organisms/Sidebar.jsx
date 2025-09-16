@@ -1,8 +1,9 @@
 import { NavLink } from "react-router-dom";
-import ApperIcon from "@/components/ApperIcon";
+import React from "react";
 import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
 
-const Sidebar = ({ userRole, isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, userRole = "student" }) => {
   const teacherMenuItems = [
     { path: "/", label: "Dashboard", icon: "LayoutDashboard" },
     { path: "/classes", label: "Classes", icon: "GraduationCap" },
@@ -30,7 +31,7 @@ const Sidebar = ({ userRole, isOpen, onClose }) => {
           </div>
           <div>
             <h2 className="text-lg font-bold gradient-text">ClassConnect</h2>
-            <p className="text-xs text-slate-500 capitalize">{userRole} Portal</p>
+<p className="text-xs text-slate-500">Education Portal</p>
           </div>
         </div>
       </div>
