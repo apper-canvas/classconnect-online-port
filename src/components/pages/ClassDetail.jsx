@@ -106,7 +106,8 @@ navigator.clipboard.writeText(classData.Class_Code_c);
                   <ApperIcon name="Calendar" className="h-4 w-4 mr-2" />
                   <span>Created {format(new Date(classData.CreatedDate), "MMM d, yyyy")}</span>
                 </div>
-<div className="flex items-center">
+{classData.Class_Code_c && (
+                <div className="flex items-center">
                   <ApperIcon name="Key" className="h-4 w-4 mr-2" />
                   <span className="font-mono">{classData.Class_Code_c}</span>
                     <Button
